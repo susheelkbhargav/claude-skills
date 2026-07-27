@@ -61,6 +61,14 @@ Every data model embodies assumptions about how data will be used — some opera
 6. Data becomes more interconnected as applications grow — evaluate models against future relationships, not just the initial shape.
 7. Relational and document databases are converging (JSON in PostgreSQL/DB2, joins in RethinkDB); a hybrid is a good route — use the combination that fits.
 
+## Problems This Solves (mapped to real system-design examples)
+
+| Mechanism | Problem it solves | Example |
+|---|---|---|
+| Document model for a self-contained one-to-many tree | A trie node, or any structure that's always read/written whole | Search autocomplete (trie serialized into a document store) |
+| Graph model — "anything can relate to anything" | Dense many-to-many relationships where joins would be unbounded-depth | News feed system (social graph for friend IDs), Google Maps (road network as nodes/edges for A*) |
+| Relational model chosen deliberately over NoSQL | Data has a strict invariant (sums to zero) that needs real joins/constraints, not app-level enforcement | Payment system (double-entry ledger on ACID SQL) |
+
 ## Connects To
 - **Chapter 3**: how these models are implemented in storage engines; locality on disk.
 - **Chapter 4**: encoding formats, JSON's problems, schemas and schema evolution.

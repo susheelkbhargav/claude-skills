@@ -60,6 +60,16 @@ Data-intensive apps are composed from general-purpose building blocks (databases
 6. Keep stateful data on a single node (scale up) until cost or HA forces distribution; stateless services distribute easily, stateful ones add real complexity. There is no magic scaling sauce — 100k req/s of 1 kB differs completely from 3 req/min of 2 GB despite equal throughput.
 7. Optimize for maintenance, the majority of software cost: build in operability, cut accidental complexity with abstractions, and design for evolvability.
 
+## Problems This Solves (mapped to real system-design examples)
+
+| Mechanism | Problem it solves | Example |
+|---|---|---|
+| Load parameters + write/read rate skew → write-time fan-out decision | Read rate outnumbers write rate by orders of magnitude; naive read-time join can't keep up | News feed system (this chapter's Twitter fan-out example, verbatim) |
+| p99 / tail-latency focus, GC pause named as a threat | A single stop-the-world pause blows a millisecond-level SLA on the hot path | Stock exchange (round-trip p99 target, GC pause called out explicitly) |
+| Availability nines + cost-of-downtime math | Justify infra spend (CDN, redundancy) against concrete dollar cost of an outage | Youtube-style video platform ($150k/day CDN cost framing) |
+| Master→slave replication + resharding as the scale-out response | Single-node capacity exhausted; must add machines without a rewrite | Generic scaling walkthrough (master-slave, sharding by key) |
+| Back-of-envelope load/availability estimation | Size a system before building it — is this 100 req/s or 100k req/s? | Any capacity-estimation pass before choosing a chapter-6/7/9 mechanism |
+
 ## Connects To
 - **Ch 2**: data models and query languages are the first layer of abstraction chosen when composing a data system.
 - **Ch 5–6 (Replication/Partitioning)**: the scale-out / shared-nothing path introduced here; rebalancing partitions revisits elastic vs manual scaling.

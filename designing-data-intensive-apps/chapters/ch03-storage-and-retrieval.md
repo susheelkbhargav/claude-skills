@@ -57,6 +57,19 @@ Writes are O(1) appends (it's a log); reads are O(n) scans. **Step 1 — hash in
 5. Columnar storage + bitmap/run-length compression + sort order is the OLAP answer; its write path reuses the LSM idea.
 6. Star schema (fact + dimension tables) is the near-universal analytics model; ETL feeds it. Keep raw data; cubes are only a boost.
 
+## Problems This Solves (mapped to real system-design examples)
+
+| Mechanism | Problem it solves | Example |
+|---|---|---|
+| LSM write path (commit log → memtable → SSTable) + Bloom filter reads | Write-heavy key-value workload needs high throughput without random-write cost | Leaderless key-value store |
+| Bloom filter as an existence check before a point lookup | Avoid a wasted lookup on a huge sparse key space | URL shortener (`shortURL → longURL`) |
+| In-memory index rebuilt at startup, no incremental persistence | Structure only makes sense in memory (quadtree over live location data); rebuild is cheap, incremental update isn't | Proximity service |
+| Purpose-built time-series engine: delta-of-delta encoding + downsampling | Metric points are mostly-monotonic timestamps with tiny deltas — generic storage wastes bytes at this volume | Metrics monitoring & alerting |
+| Sorted set (hashmap + skip list) for O(log n) rank | Relational nested-count-query for "what's my rank" doesn't scale past one table | Real-time leaderboard |
+| LSM justification for a custom write-heavy index | Sequential-write engine needed for a bespoke search structure, same reasoning as Cassandra/RocksDB | Distributed email service (custom search engine) |
+| mmap append log + embedded LSM (RocksDB) + periodic snapshots | Need both a durable sequential log and fast point reads on the same node | Digital wallet |
+| WAL segments exploiting sequential disk + OS page cache | Broker must sustain high write throughput without seek-bound I/O | Distributed message queue |
+
 ## Connects To
 
 - **Ch 2 (Data Models)**: same question from the database's side — Ch 2 was how you hand data over; Ch 3 is how the engine stores and finds it.

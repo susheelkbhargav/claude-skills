@@ -65,6 +65,14 @@ One record: `{userName: "Martin", favoriteNumber: 1337, interests: ["daydreaming
 5. Compatibility responsibilities differ by dataflow mode: databases need both directions (data outlives code); services need backward-compatible requests, forward-compatible responses; brokers need both to deploy in any order.
 6. Don't let RPC pretend the network isn't there — retries need idempotence, timeouts mean unknown outcome.
 
+## Problems This Solves (mapped to real system-design examples)
+
+This is the lowest-leverage chapter across the repo's 28 examples — only one grounds it directly. Most designs don't surface schema evolution as a named concern even where it's implicitly present (any Kafka-based pipeline).
+
+| Mechanism | Problem it solves | Example |
+|---|---|---|
+| Backward/forward-compatible message schema across producer, broker, and consumer | Producers and consumers deploy independently; neither side can assume the other is on the same schema version | Distributed message queue (explicitly requires schema compliance between producer/queue/consumer) |
+
 ## Connects To
 
 - **Ch 1** evolvability — this chapter is its data-layer mechanics.
